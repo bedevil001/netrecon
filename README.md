@@ -1,37 +1,40 @@
-# netrecon
+# NetRecon — Lightweight Network Reconnaissance Tool
 
-A lightweight, dependency-light **network reconnaissance tool** written in
-Bash: host discovery, TCP port scanning, service/banner identification, and
-text + HTML reporting. Built as a learning project to understand how tools
-like nmap work under the hood, with a graceful fallback so it also runs on
-a machine that doesn't have nmap installed.
+NetRecon is a lightweight, dependency-conscious network reconnaissance tool developed in Bash to simplify network discovery and TCP port scanning in authorized security environments. Designed as both a practical security utility and a cybersecurity learning project, it demonstrates core networking concepts and the principles behind reconnaissance tools such as Nmap.
 
-## ⚠️ Authorized use only
+## Key Features
 
-This tool is for scanning **systems you own or have explicit written
-permission to test** — a home lab, a CTF target, or a client engagement
-with signed scope. Scanning systems you don't own or lack authorization
-for is illegal in most jurisdictions (e.g. the U.S. Computer Fraud and
-Abuse Act, the UK Computer Misuse Act) even when the scan itself is "just"
-reconnaissance.
+- **Target Discovery:** Accepts individual hosts, CIDR network ranges, and target lists from files.
+- **Host Discovery:** Identifies potentially live hosts before port scanning to improve efficiency.
+- **TCP Port Scanning:** Scans common ports or custom port ranges using Nmap or a native Bash-based TCP connect scanner.
+- **Service Identification:** Maps open ports to common service names and supports optional service banner collection.
+- **Automated Reporting:** Generates timestamped text and HTML reports, with optional JSON output for further analysis.
+- **Flexible Execution:** Automatically selects the available scanning backend, allowing operation with or without Nmap.
+- **Safety Controls:** Restricts public IP targets by default and requires interactive confirmation before scanning unless explicitly overridden.
 
-Built-in safeguards (not a substitute for authorization, but they reduce
-accidental misuse):
+## Technologies
+
+Built with Bash scripting and standard Linux networking utilities, with optional integration of Nmap and Netcat. The project uses a modular structure to separate target discovery, port scanning, shared utilities, configuration, and report generation.
+
+## Learning and Use Cases
+
+NetRecon is suitable for cybersecurity education, networking practice, authorized lab environments, Capture the Flag (CTF) exercises, and portfolio demonstrations. It provides hands-on experience with TCP connections, port scanning, timeouts, parallel execution, service enumeration, and security reporting.
+
+## ⚠️ Authorized Use Only
+
+NetRecon is intended only for systems you own or have explicit authorization to test, such as a home lab, a CTF target, or an approved client engagement. Always obtain permission and follow the defined scope before conducting network reconnaissance. Scanning systems without authorization may be illegal.
+
+Built-in safeguards help reduce accidental misuse (but do not replace authorization):
 - Refuses public/non-private IP targets unless you pass `--allow-public`.
-- Always shows an interactive confirmation before scanning, unless you
-  pass `-y`/`--yes` (for use in your own authorized, scripted pipelines).
+- Shows an interactive confirmation before scanning, unless you pass `-y`/`--yes` for an authorized scripted workflow.
 
-## What it does
+## What It Does
 
-1. **Target expansion** — accepts a single host, a CIDR range, or a file
-   with one host/CIDR per line.
-2. **Host discovery** — checks which targets are actually live before
-   scanning every port on every address, saving time.
-3. **Port scanning** — TCP connect scan across a port list or range.
-4. **Service identification** — maps common ports to service names, and
-   (optionally) grabs a banner from each open port.
-5. **Reporting** — writes a timestamped `report.txt`, `report.html`, and
-   optional `results.json` per run.
+1. **Target expansion** — accepts a single host, a CIDR range, or a file with one host/CIDR per line.
+2. **Host discovery** — checks which targets appear to be live before scanning ports.
+3. **Port scanning** — performs TCP connect scans across a port list or range.
+4. **Service identification** — maps common ports to service names and can optionally collect service banners.
+5. **Reporting** — writes a timestamped `report.txt`, `report.html`, and optional `results.json` per run.
 
 ## Two backends, same output shape
 
@@ -87,7 +90,7 @@ config/top-ports.txt      # default port list (~30 commonly-exposed ports)
 config/services.tsv        # port -> service name lookup (bash backend)
 ```
 
-## Known limitations (good to mention if asked in an interview)
+## Known limitations
 
 - The bash fallback backend does a full TCP connect (not a SYN scan), so
   it's slower and more visible in logs than `nmap -sS` — that trade-off is
@@ -102,16 +105,16 @@ config/services.tsv        # port -> service name lookup (bash backend)
   pings — so a fully firewalled host can look "down" when it's actually up.
   `--skip-discovery` scans every target regardless.
 
-## Ideas for extending it (good CV talking points / next steps)
+## Ideas for extending it 
 
 - Add a UDP scan mode.
 - Protocol-aware banner probes (send a minimal HTTP request on web ports).
 - Compare detected open ports against a baseline to flag drift over time.
 - A `--rate-limit` flag for noisier/slower stealth-friendly scanning.
 
-## Why this is on my CV
+## Project Demonstrates
 
-This project demonstrates: Bash scripting at a non-trivial scale (argument
+Bash scripting at a non-trivial scale (argument
 parsing, modular libraries, error handling), core TCP/IP and scanning
 concepts (connect scans, timeouts, concurrency control), safe tool design
 (authorization gates, safe defaults), and report generation for
