@@ -1,4 +1,3 @@
-#!/usr/bin/env bash
 # netrecon - a small, dependency-light network reconnaissance tool.
 #
 # Discovers live hosts in a target range, scans them for open TCP ports,
